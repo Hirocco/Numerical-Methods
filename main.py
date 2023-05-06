@@ -1,41 +1,45 @@
 import numpy as np
 from deflacja import oblicz_pierwiastek, deflation
-from deflacja_zespolone import qr_deflation
+from deflacja_zespolone import deflacja_zespolone, oblicz_pierwiastki_zespolone
 from laGuerr import laguerre
 from LaGuerr_zespolone import laguerre_zesp
 from wykres import rysuj_wykres
 
 if __name__ == '__main__':
-    ###Deflacja na liczbach rzeczywistych
+    """ DZIALA
+    print("Deflacja na liczbach rzeczywistych : \n")
 
     f = [1, 3, -5, -9]  # x^3 + 3x^2 - 5x -9
-    pom_f = f  # funkcja pomocnicza
-    stopien = len(pom_f)  # stopien wielomianu
-    roots = []  # pierwiastki wielomianu
-    root = oblicz_pierwiastek(f)
-    roots.append(round(root, 5))
-    while root is not None and stopien > 1:
+    pom_f = f
+    roots = oblicz_pierwiastek(f)
+    for i in range(0, len(roots)):
+        root = roots[i]
         deflacja_wielomianu = deflation(pom_f, root)
-        root = oblicz_pierwiastek(deflacja_wielomianu)
-        roots.append(round(root, 5))
+        rysuj_wykres(np.roots(deflacja_wielomianu), deflacja_wielomianu)
+        print(i,")Pomniejszony wielomian:" ,deflacja_wielomianu)
         pom_f = deflacja_wielomianu
-        stopien = len(pom_f)
-    print("Deflacja na liczbach rzeczywistych : \n")
-    print("Pierwiastki: ", roots)
-    print("Pierwotny wielomian: ", f)
-    print("Wielomian po deflacji: ", pom_f)
-    rysuj_wykres(roots,f)
 
-"""
+    print("Pierwotny wielomian: ", f)
+    print("Pierwiastki: ", roots)
+    
     ###deflacja na liczbach zespolonych
 
-    coeffs = np.array([1, 3, -3, -13, -10])
-    roots = np.array([-2, 1, 5])
-    for root in roots:
-        coeffs = qr_deflation(coeffs, root)
-    print("Deflacja na liczbach zespolonych: \n")
-    print(coeffs)
+    print("Deflacja dla liczb zespolonych : \n")
 
+    poly = [1, -3, 3, -1]  # x^3 - 3x^2 + 3x - 1
+    pom_poly = poly
+    roots = oblicz_pierwiastki_zespolone(poly)
+    for i in range(0, len(roots)):
+        root = roots[i]
+        deflacja_zespolona_wielomianu = deflacja_zespolone(pom_poly , root)
+        print(i, ") Pomniejszony wielomian: ", deflacja_zespolona_wielomianu)
+        pom_poly = deflacja_zespolona_wielomianu
+    print("Poczatkowa funkcja : " , poly)
+    rysuj_wykres(roots, poly)
+    print("Pierwiastki : " , roots)
+
+
+    """
     ###metoda LaGuerr'a na liczbach rzeczywistych
 
     coeffs = [1, -2, 4, -8]
@@ -52,6 +56,7 @@ if __name__ == '__main__':
     print("Metoda LaGuerr'a na liczbach rzeczywistych: \n")
     print(roots)
 
+    """
     ###metoda LaGuerr'a na liczbach zespolonych
 
     # Przykładowe wielomiany
@@ -72,4 +77,4 @@ if __name__ == '__main__':
     for i in range(len(roots2)):
         root = laguerre_zesp(poly2, roots2[i])
         print(f"x_{i + 1} =", root)
-"""
+    """

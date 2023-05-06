@@ -1,55 +1,30 @@
 import numpy as np
-
-def qr_deflation(coeffs, root, tol=1e-12, max_iter=100):
+from wykres import rysuj_wykres
+def deflacja_zespolone(poly, root):
     """
-    Funkcja obliczająca nowe współczynniki wielomianu po wykonaniu QR-deflacji dla danego pierwiastka.
-
+    Funkcja dokonująca deflacji wielomianu poly przez usunięcie pierwiastka root.
     Argumenty:
-    coeffs -- wektor współczynników wielomianu
-    root -- pierwiastek do usunięcia z wielomianu
-    tol -- tolerancja do zatrzymania algorytmu
-    max_iter -- maksymalna liczba iteracji algorytmu
-
-    Zwraca:
-    coeffs_new -- wektor współczynników wielomianu po wykonaniu QR-deflacji
+    poly - lista współczynników wielomianu, zaczynając od najwyższej potęgi,
+    root - pierwiastek do usunięcia.
     """
-    n = len(coeffs)
+    n = len(poly)  # n-ty st. wielomianu
+    if n > 1:
+        q = np.zeros(n - 1, dtype=np.complex128)  # lista zer o długości n-1
 
-    # przygotowanie macierzy Hessenberga
-    H = np.zeros((n, n))
-    for i in range(n):
-        H[i, i] = coeffs[i]
-        if i < n-1:
-            H[i+1, i] = 1
+        q[-1] = poly[-1]  # przypisanie ostatniej wartości do listy q
 
-    # iteracyjne wykonanie QR-deflacji
-    for k in range(n-1, 0, -1):
-        while abs(H[k, k-1]) > tol*(abs(H[k-1, k-1]) + abs(H[k, k])):
-            Q, R = np.linalg.qr(H - H[k, k]*np.eye(n))
-            H = np.dot(R, Q) + H[k, k]*np.eye(n)
+        for i in range(n - 2, -1):
+            q[i] = poly[i + 1] + root * q[i + 1]
 
-        # usunięcie k-tego pierwiastka
-        if abs(H[k, k-1]) < tol*(abs(H[k-1, k-1]) + abs(H[k, k])):
-            H[k, k-1] = 0
-            H[k-1, k] = 0
+        q[0] = poly[0] + root * q[0]
 
-        # podstawienie zera w miejscu pierwiastka
-        for i in range(k, n-1):
-            c, s = H[i:i+2, i:i+2].dot([H[i, i-1], H[i+1, i-1]])
-            H[i, i-1] = c
-            H[i+1, i-1] = 0
-            H[i, i] = s
+        return q[:-1]
+    else:
+        print("Deflacja możliwa jest tylko dla wielomianów st. większego od 1")
+        return poly
 
-    # wyznaczenie nowych współczynników
-    coeffs_new = np.zeros(n-1)
-    for i in range(n-1):
-        coeffs_new[i] = H[i, i]
+def oblicz_pierwiastki_zespolone(poly):
+    roots = np.roots(poly)
+    return roots
 
-    return coeffs_new
 
-if __name__ == '__main__':
-    coeffs = np.array([1, 3, -3, -13, -10])
-    roots = np.array([-2, 1, 5])
-    for root in roots:
-        coeffs = qr_deflation(coeffs, root)
-    print(coeffs)
