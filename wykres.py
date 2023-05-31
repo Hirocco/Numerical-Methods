@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 
 def rysuj_wykres(roots,coeffs):
     # Określenie granic przedziału
-    x_min, x_max = -10, 20
-    y_min,y_max = -20, 40
+    x_min, x_max = -10, 10
+    y_min,y_max = -10, 10
     # Tworzenie listy punktów x
     x = np.linspace(x_min, x_max, 1000)
 
